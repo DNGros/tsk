@@ -2,6 +2,7 @@ import argparse
 
 import svgutils
 import svgutils.transform as sg
+import custsvgutils
 import os
 
 HEIGHT_UNITS = 99.213   # The height of the thing in whatever units it exports
