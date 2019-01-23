@@ -2,3 +2,4 @@
 *.swo
 .idea/
 venv
+names.txt

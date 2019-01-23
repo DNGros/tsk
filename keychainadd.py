@@ -1,5 +1,8 @@
+import argparse
+
 import svgutils
 import svgutils.transform as sg
+import os
 
 HEIGHT_UNITS = 99.213   # The height of the thing in whatever units it exports
                         # as (so pixels, I think)
@@ -15,12 +18,9 @@ def cm_to_px(cm: float) -> float:
     return HEIGHT_UNITS / HEIGHT_CM * cm
 
 
-if __name__ == "__main__":
-    fig = svgutils.transform.fromfile('keychain_red.svg')
+def make_a_chain(name: str, src_file: str, out_root="./"):
+    fig = svgutils.transform.fromfile(src_file)
     root = fig.getroot()
-    for e in root:
-        print(e.tostr())
-    name = "Foobar Bazington"
     text_margin = 0.08
     font_size = 13
     font_family="monospace"
@@ -45,4 +45,18 @@ if __name__ == "__main__":
     )
 
     fig.append([root, name_text, year_text])
-    fig.save("new_keychain.svg")
+    clean_name = name.strip().replace(" ", "")
+    fig.save(os.path.join(out_root, f"{clean_name}_{src_file}"))
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='makin some chains.')
+    parser.add_argument('-s', '--src', type=str, default="keychain.svg")
+    parser.add_argument('-o', '--outroot', type=str, default="outs/")
+    parser.add_argument('-n', '--names', type=str, default="names.txt")
+    args = parser.parse_args()
+    with open(args.names) as f:
+        for name in f:
+            make_a_chain(name, args.src, args.outroot)
+
+
