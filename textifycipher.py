@@ -1,9 +1,16 @@
 import argparse
+import math
+from typing import Tuple, List
 
 import svgutils
 import svgutils.transform as sg
+from svgutils.transform import FigureElement
+
 import custsvgutils
 import os
+
+from custsvgutils import CircleElement
+
 HEIGHT_UNITS = 226.772  # The height of the thing in whatever units it exports
                         # as (so pixels, I think)
 WIDTH_UNITS = 394.016
@@ -11,11 +18,34 @@ WIDTH_UNITS = 394.016
 HEIGHT_CM = 8           # The intended height in cm.
 WIDTH_CM = 13.9
 
+BIG_DISK_DIAMETER = 6.999
+BIG_DISK_CENTER_X_CM = 0.557 + BIG_DISK_DIAMETER / 2
+BIG_DISK_CENTER_Y_CM = 0.463 + BIG_DISK_DIAMETER / 2
+
 assert -0.01 < HEIGHT_UNITS / HEIGHT_CM - WIDTH_UNITS / WIDTH_CM < 0.01
 
 
 def cm_to_px(cm: float) -> float:
     return HEIGHT_UNITS / HEIGHT_CM * cm
+
+
+def draw_circle_thing(diameter: float, center: Tuple[float, float]) -> List[FigureElement]:
+    """
+    makes swirly circle thing
+    :param diameter: the diameter of design in cm
+    :param center: center of design in cm
+    """
+    x, y = cm_to_px(center[0]), cm_to_px(center[1])
+    r_px = cm_to_px(diameter) / 2
+
+    circles = []
+    num_circles = 26
+    for i in range(num_circles):
+        rads = 2*math.pi/num_circles * i
+        cx = x + math.sin(rads) * r_px/2
+        cy = y + math.cos(rads) * r_px/2
+        circles.append(CircleElement(cx, cy, r_px, stroke_width=1, fill="none"))
+    return circles
 
 
 def make_cipher(name: str, src_file: str, out_root="./"):
@@ -39,7 +69,11 @@ def make_cipher(name: str, src_file: str, out_root="./"):
         stroke_width="1"
     )
 
-    fig.append([root, name_text])
+    circles = draw_circle_thing(
+        diameter=BIG_DISK_DIAMETER/2,
+        center=(BIG_DISK_CENTER_X_CM, BIG_DISK_CENTER_Y_CM)
+    )
+    fig.append([root, name_text] + circles)
     clean_name = name.strip().replace(" ", "")
     fig.save(os.path.join(out_root, f"{clean_name}_{src_file}"))
 

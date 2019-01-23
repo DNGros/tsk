@@ -35,3 +35,18 @@ class BorderedTextElement(FigureElement):
         )
         txt.text = text
         FigureElement.__init__(self, txt)
+
+
+class CircleElement(FigureElement):
+    def __init__(self, x, y, r, fill='black', stroke_color="black", stroke_width="1px"):
+        txt = etree.Element(
+            SVG+"circle",
+            {
+                "cx": str(x), "cy": str(y), "r": str(r),
+                "fill": str(fill),
+                "stroke": str(stroke_color),
+                "stroke-width": str(stroke_width),
+                "paint-order": "stroke",
+            }
+        )
+        FigureElement.__init__(self, txt)
