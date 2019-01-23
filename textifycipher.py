@@ -23,7 +23,7 @@ BIG_DISK_CENTER_X_CM = 0.557 + BIG_DISK_DIAMETER / 2
 BIG_DISK_CENTER_Y_CM = 0.463 + BIG_DISK_DIAMETER / 2
 
 RING_OUTER_DIAMETER = 5.6
-SMALL_DISK_DIAMETER = 5.001
+SMALL_DISK_DIAMETER = 4.8
 
 assert -0.01 < HEIGHT_UNITS / HEIGHT_CM - WIDTH_UNITS / WIDTH_CM < 0.01
 
@@ -51,7 +51,7 @@ def draw_circle_thing(diameter: float, center: Tuple[float, float]) -> List[Figu
     return circles
 
 
-def make_cipher(name: str, src_file: str, out_root="./"):
+def make_cipher(name: str, src_file: str, out_root="./", red_cuts: bool = False):
     fig = svgutils.transform.fromfile(src_file)
     root = fig.getroot()
     font_size = 12
@@ -68,8 +68,8 @@ def make_cipher(name: str, src_file: str, out_root="./"):
         weight=font_weight,
         anchor="middle",
         color="none",
-        stroke_color="red",
-        stroke_width="1"
+        stroke_color="red" if red_cuts else "black",
+        stroke_width="1" if red_cuts else "0.001"
     )
 
     circles = draw_circle_thing(
@@ -83,12 +83,17 @@ def make_cipher(name: str, src_file: str, out_root="./"):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='makin some ciphers.')
-    parser.add_argument('-s', '--src', type=str, default="tscipher.svg")
+    parser.add_argument('-s', '--src', type=str, default=None)
     parser.add_argument('-o', '--outroot', type=str, default="outs/")
     parser.add_argument('-n', '--names', type=str, default="names.txt")
+    parser.add_argument('-r', '--red', action='store_true',
+                        help="Whether or not to show cut lines as red rather than hairlines")
     args = parser.parse_args()
+    #args.red = True
+    if args.src is None:
+        args.src = "tscipher_red.svg" if args.red else "tscipher.svg"
     with open(args.names) as f:
         for name in f:
-            make_cipher(name, args.src, args.outroot)
+            make_cipher(name, args.src, args.outroot, args.red)
 
 
