@@ -22,6 +22,8 @@ BIG_DISK_DIAMETER = 6.999
 BIG_DISK_CENTER_X_CM = 0.557 + BIG_DISK_DIAMETER / 2
 BIG_DISK_CENTER_Y_CM = 0.463 + BIG_DISK_DIAMETER / 2
 
+SMALL_DISK_DIAMETER = 5.6
+
 assert -0.01 < HEIGHT_UNITS / HEIGHT_CM - WIDTH_UNITS / WIDTH_CM < 0.01
 
 
@@ -44,7 +46,7 @@ def draw_circle_thing(diameter: float, center: Tuple[float, float]) -> List[Figu
         rads = 2*math.pi/num_circles * i
         cx = x + math.sin(rads) * r_px/2
         cy = y + math.cos(rads) * r_px/2
-        circles.append(CircleElement(cx, cy, r_px, stroke_width=1, fill="none"))
+        circles.append(CircleElement(cx, cy, r_px/2, stroke_width=1, fill="none"))
     return circles
 
 
@@ -70,7 +72,7 @@ def make_cipher(name: str, src_file: str, out_root="./"):
     )
 
     circles = draw_circle_thing(
-        diameter=BIG_DISK_DIAMETER/2,
+        diameter=SMALL_DISK_DIAMETER,
         center=(BIG_DISK_CENTER_X_CM, BIG_DISK_CENTER_Y_CM)
     )
     fig.append([root, name_text] + circles)
