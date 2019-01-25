@@ -54,7 +54,7 @@ def draw_circle_thing(diameter: float, center: Tuple[float, float]) -> List[Figu
     return circles
 
 
-def make_cipher(name: str, src_file: str, out_root="./", red_cuts: bool = False, pos: (float, float)):
+def make_cipher(name: str, src_file: str, out_root="./", red_cuts: bool = False, pos: Tuple[float, float]=(0,0)):
     font_size = 18
     font_family="monospace"
     font_weight = "bold"
