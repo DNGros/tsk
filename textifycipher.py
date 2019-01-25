@@ -54,9 +54,7 @@ def draw_circle_thing(diameter: float, center: Tuple[float, float]) -> List[Figu
     return circles
 
 
-def make_cipher(name: str, src_file: str, out_root="./", red_cuts: bool = False):
-    fig = svgutils.transform.fromfile(src_file)
-    root = fig.getroot()
+def make_cipher(name: str, src_file: str, out_root="./", red_cuts: bool = False, pos: (float, float)):
     font_size = 18
     font_family="monospace"
     font_weight = "bold"
@@ -83,8 +81,8 @@ def make_cipher(name: str, src_file: str, out_root="./", red_cuts: bool = False)
     name_text = custsvgutils.BorderedTextElement(
         #x=cm_to_px(8.095+5.001/2),
         #y=cm_to_px(1.503+5.001/2),
-        x=cm_to_px(HEIGHT_CM/2),
-        y=cm_to_px(WIDTH_CM/2)+4,
+        x=cm_to_px(pos[0] + HEIGHT_CM/2),
+        y=cm_to_px(pos[1] + WIDTH_CM/2)+4,
         text=name,
         size=font_size,
         font=font_family,
@@ -97,14 +95,13 @@ def make_cipher(name: str, src_file: str, out_root="./", red_cuts: bool = False)
         letter_spaceing=letter_spaceing
     )
 
+    return name_text
+
     #circles = draw_circle_thing(
     #    diameter=SMALL_DISK_DIAMETER,
     #    center=(BIG_DISK_CENTER_X_CM, BIG_DISK_CENTER_Y_CM)
     #)
     #fig.append([root, name_text] + circles)
-    fig.append([root, name_text])
-    clean_name = name.strip().replace(" ", "")
-    fig.save(os.path.join(out_root, f"{clean_name}_{src_file}"))
 
 
 if __name__ == "__main__":
@@ -112,6 +109,7 @@ if __name__ == "__main__":
     parser.add_argument('-s', '--src', type=str, default=None)
     parser.add_argument('-o', '--outroot', type=str, default="outs/")
     parser.add_argument('-n', '--names', type=str, default="names.txt")
+    parser.add_argument('-p', '--positions', type=str, default=None)
     #parser.add_argument('-r', '--red', action='store_true',
     #                    help="Whether or not to show cut lines as red rather than hairlines")
     args = parser.parse_args()
@@ -119,8 +117,23 @@ if __name__ == "__main__":
     if args.src is None:
         #args.src = "tscipher_red.svg" if args.red else "tscipher.svg"
         args.src = "tscipher_small.svg"
+    names = []
+    positions = None
     with open(args.names) as f:
         for name in f:
-            make_cipher(name, args.src, args.outroot, args.red)
+            names.append(name)
+    if args.positions is not None:
+        positions = []
+        with open(args.positions) as f:
+            with position in f:
+                positions.append((float(x) for x in position.split()))
+    for i, name in enumerate(names):
+        positions = positions[(i % len(positions))] if positions is not None else None
+    fig = svgutils.transform.fromfile(src_file)
+    root = fig.getroot()
+    names_figs = [make_cipher(name, args.src, args.outroot, args.red, pos) for name, pos in zip(names, positions)]
+    fig.append([root] + names_figs)
+    clean_name = name.strip().replace(" ", "")
+    fig.save(os.path.join(out_root, f"{clean_name}_{src_file}"))
 
 
