@@ -42,12 +42,15 @@ def draw_circle_thing(diameter: float, center: Tuple[float, float]) -> List[Figu
     r_px = cm_to_px(diameter) / 2
 
     circles = []
-    num_circles = 26
+    num_circles = 12
+    circle_mult = 1
     for i in range(num_circles):
         rads = 2*math.pi/num_circles * i
-        cx = x + math.sin(rads) * r_px/2
-        cy = y + math.cos(rads) * r_px/2
-        circles.append(CircleElement(cx, cy, r_px/2, stroke_width=1, fill="none"))
+        little_radius = (r_px/2)*circle_mult
+        center_offset = r_px - little_radius
+        cx = x + math.sin(rads) * center_offset
+        cy = y + math.cos(rads) * center_offset
+        circles.append(CircleElement(cx, cy, little_radius, stroke_width=1, fill="none"))
     return circles
 
 
