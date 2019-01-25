@@ -14,7 +14,9 @@ class BorderedTextElement(FigureElement):
     Corresponds to SVG ``<text>`` tag."""
     def __init__(self, x, y, text, size=8, font="Verdana",
                  weight="normal", letterspacing=0, anchor='start',
-                 color='black', stroke_color="black", stroke_width="1px"):
+                 color='black', stroke_color="black", stroke_width="1px",
+                 text_length='none', letter_spaceing='normal'):
+        print(text_length)
         txt = etree.Element(
             SVG+"text",
             {
@@ -30,9 +32,13 @@ class BorderedTextElement(FigureElement):
                 "paint-order": "stroke",
                 "stroke-linecap": "butt",
                 "stroke-linejoin": "miter",
-                "stroke-opacity": "1"
+                "stroke-opacity": "1",
+                'textLength': str(text_length),
+                'lengthAdjust': 'spacing',
+                'letter-spacing': str(letter_spaceing)
             }
         )
+
         txt.text = text
         FigureElement.__init__(self, txt)
 

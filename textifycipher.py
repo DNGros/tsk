@@ -11,12 +11,12 @@ import os
 
 from custsvgutils import CircleElement
 
-HEIGHT_UNITS = 226.772  # The height of the thing in whatever units it exports
+HEIGHT_UNITS = 171.496  # The height of the thing in whatever units it exports
                         # as (so pixels, I think)
-WIDTH_UNITS = 394.016
+WIDTH_UNITS = 171.496
 
-HEIGHT_CM = 8           # The intended height in cm.
-WIDTH_CM = 13.9
+HEIGHT_CM = 6.05           # The intended height in cm.
+WIDTH_CM = 6.05
 
 BIG_DISK_DIAMETER = 6.999
 BIG_DISK_CENTER_X_CM = 0.557 + BIG_DISK_DIAMETER / 2
@@ -57,29 +57,52 @@ def draw_circle_thing(diameter: float, center: Tuple[float, float]) -> List[Figu
 def make_cipher(name: str, src_file: str, out_root="./", red_cuts: bool = False):
     fig = svgutils.transform.fromfile(src_file)
     root = fig.getroot()
-    font_size = 12
-    font_family="sarif"
+    font_size = 18
+    font_family="monospace"
     font_weight = "bold"
+    letter_spaceing=5
+    name = name.strip()
+    print(name)
+    print(f"len {len(name)}")
+    if len(name) == 7:
+        font_size=15
+        letter_spaceing=3
+    elif len(name) == 8:
+        font_size=13
+        letter_spaceing=2
+    elif len(name) == 9:
+        font_size=13
+        letter_spaceing=2
+    elif len(name) == 10:
+        font_size=12
+        letter_spaceing=2
+    elif len(name) > 10:
+        raise ValueError(f"name len unsupported {name}")
 
     #two_line_name = "\n".join(name.split())
     name_text = custsvgutils.BorderedTextElement(
-        x=cm_to_px(8.095+5.001/2),
-        y=cm_to_px(1.503+5.001/2),
+        #x=cm_to_px(8.095+5.001/2),
+        #y=cm_to_px(1.503+5.001/2),
+        x=cm_to_px(HEIGHT_CM/2),
+        y=cm_to_px(WIDTH_CM/2)+4,
         text=name,
         size=font_size,
         font=font_family,
         weight=font_weight,
         anchor="middle",
         color="none",
-        stroke_color="red" if red_cuts else "black",
-        stroke_width="1" if red_cuts else "0.001"
+        stroke_color="yellow",
+        stroke_width="1",
+        #text_length=cm_to_px(min(len(name)*.4, SMALL_DISK_DIAMETER*.7)),
+        letter_spaceing=letter_spaceing
     )
 
-    circles = draw_circle_thing(
-        diameter=SMALL_DISK_DIAMETER,
-        center=(BIG_DISK_CENTER_X_CM, BIG_DISK_CENTER_Y_CM)
-    )
-    fig.append([root, name_text] + circles)
+    #circles = draw_circle_thing(
+    #    diameter=SMALL_DISK_DIAMETER,
+    #    center=(BIG_DISK_CENTER_X_CM, BIG_DISK_CENTER_Y_CM)
+    #)
+    #fig.append([root, name_text] + circles)
+    fig.append([root, name_text])
     clean_name = name.strip().replace(" ", "")
     fig.save(os.path.join(out_root, f"{clean_name}_{src_file}"))
 
@@ -89,12 +112,13 @@ if __name__ == "__main__":
     parser.add_argument('-s', '--src', type=str, default=None)
     parser.add_argument('-o', '--outroot', type=str, default="outs/")
     parser.add_argument('-n', '--names', type=str, default="names.txt")
-    parser.add_argument('-r', '--red', action='store_true',
-                        help="Whether or not to show cut lines as red rather than hairlines")
+    #parser.add_argument('-r', '--red', action='store_true',
+    #                    help="Whether or not to show cut lines as red rather than hairlines")
     args = parser.parse_args()
-    #args.red = True
+    args.red = True
     if args.src is None:
-        args.src = "tscipher_red.svg" if args.red else "tscipher.svg"
+        #args.src = "tscipher_red.svg" if args.red else "tscipher.svg"
+        args.src = "tscipher_small.svg"
     with open(args.names) as f:
         for name in f:
             make_cipher(name, args.src, args.outroot, args.red)
