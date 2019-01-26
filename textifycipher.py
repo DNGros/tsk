@@ -22,8 +22,8 @@ BIG_DISK_DIAMETER = 6.999
 BIG_DISK_CENTER_X_CM = 0.557 + BIG_DISK_DIAMETER / 2
 BIG_DISK_CENTER_Y_CM = 0.463 + BIG_DISK_DIAMETER / 2
 
-RING_OUTER_DIAMETER = 5.6
-SMALL_DISK_DIAMETER = 4.8
+RING_OUTER_DIAMETER = 5.65
+SMALL_DISK_DIAMETER = 4.7
 
 assert -0.01 < HEIGHT_UNITS / HEIGHT_CM - WIDTH_UNITS / WIDTH_CM < 0.01
 
@@ -81,8 +81,8 @@ def make_cipher(name: str, src_file: str, out_root="./", red_cuts: bool = False,
     name_text = custsvgutils.BorderedTextElement(
         #x=cm_to_px(8.095+5.001/2),
         #y=cm_to_px(1.503+5.001/2),
-        x=cm_to_px(pos[0] + HEIGHT_CM/2),
-        y=cm_to_px(pos[1] + WIDTH_CM/2)+4,
+        x=cm_to_px(pos[0] + HEIGHT_CM/2)-5,
+        y=cm_to_px(pos[1] + WIDTH_CM/2),
         text=name,
         size=font_size,
         font=font_family,
@@ -125,15 +125,16 @@ if __name__ == "__main__":
     if args.positions is not None:
         positions = []
         with open(args.positions) as f:
-            with position in f:
-                positions.append((float(x) for x in position.split()))
+            for position in f:
+                positions.append([float(x) for x in position.split()])
     for i, name in enumerate(names):
-        positions = positions[(i % len(positions))] if positions is not None else None
-    fig = svgutils.transform.fromfile(src_file)
+        positions = [positions[(i % len(positions))] for i in range(len(names)) if positions is not None]
+    print("positions", positions)
+    fig = svgutils.transform.fromfile(args.src)
     root = fig.getroot()
     names_figs = [make_cipher(name, args.src, args.outroot, args.red, pos) for name, pos in zip(names, positions)]
     fig.append([root] + names_figs)
     clean_name = name.strip().replace(" ", "")
-    fig.save(os.path.join(out_root, f"{clean_name}_{src_file}"))
+    fig.save(os.path.join(args.outroot, f"{clean_name}_{args.src}"))
 
 
