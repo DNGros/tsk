@@ -60,8 +60,8 @@ def make_cipher(name: str, src_file: str, out_root="./", red_cuts: bool = False,
     font_weight = "bold"
     letter_spaceing=5
     name = name.strip()
-    print(name)
-    print(f"len {len(name)}")
+    # print(name)
+    # print(f"len {len(name)}")
     if len(name) == 7:
         font_size=15
         letter_spaceing=3
@@ -127,14 +127,18 @@ if __name__ == "__main__":
         with open(args.positions) as f:
             for position in f:
                 positions.append([float(x) for x in position.split()])
+    # print("positions", positions)
+    names_figs = []
     for i, name in enumerate(names):
-        positions = [positions[(i % len(positions))] for i in range(len(names)) if positions is not None]
-    print("positions", positions)
-    fig = svgutils.transform.fromfile(args.src)
-    root = fig.getroot()
-    names_figs = [make_cipher(name, args.src, args.outroot, args.red, pos) for name, pos in zip(names, positions)]
-    fig.append([root] + names_figs)
-    clean_name = name.strip().replace(" ", "")
-    fig.save(os.path.join(args.outroot, f"{clean_name}_{args.src}"))
+        pos = positions[i % len(positions)]
+        names_figs += [make_cipher(name, args.src, args.outroot, args.red, pos)]
+        print(i)
+        if i == len(positions) or i == len(names) - 1:
+            fig = svgutils.transform.fromfile(args.src)
+            root = fig.getroot()
+            fig.append([root] + names_figs)
+            clean_name = name.strip().replace(" ", "")
+            fig.save(os.path.join(args.outroot, f"{clean_name}_{args.src}"))
+
 
 
