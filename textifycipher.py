@@ -133,12 +133,13 @@ if __name__ == "__main__":
         pos = positions[i % len(positions)]
         names_figs += [make_cipher(name, args.src, args.outroot, args.red, pos)]
         print(i)
-        if i == len(positions) or i == len(names) - 1:
+        if i == len(positions) - 1 or i == len(names) - 1:
             fig = svgutils.transform.fromfile(args.src)
             root = fig.getroot()
             fig.append([root] + names_figs)
             clean_name = name.strip().replace(" ", "")
             fig.save(os.path.join(args.outroot, f"{clean_name}_{args.src}"))
+            names_figs = []
 
 
 
