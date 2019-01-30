@@ -126,6 +126,7 @@ if __name__ == "__main__":
             for position in f:
                 positions.append([float(x) for x in position.split()])
     names_figs = []
+    fig_number = 0
     for i, name in enumerate(names):
         index_in_positions = i % len(positions)
         pos = positions[index_in_positions]
@@ -138,8 +139,9 @@ if __name__ == "__main__":
             root = fig.getroot()
             fig.append([root] + names_figs)
             clean_name = name.strip().replace(" ", "")
-            fig.save(os.path.join(args.outroot, f"{clean_name}_{args.src}"))
+            fig.save(os.path.join(args.outroot, f"{fig_number}_{clean_name}_{args.src}"))
             names_figs = []
+            fig_number += 1
 
 
 
