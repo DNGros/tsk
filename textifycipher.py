@@ -1,7 +1,6 @@
-import argparse
-import math
-from typing import Tuple, List
-
+import argparse 
+import math 
+from typing import Tuple, List 
 import svgutils
 import svgutils.transform as sg
 from svgutils.transform import FigureElement
@@ -55,12 +54,15 @@ def draw_circle_thing(diameter: float, center: Tuple[float, float]) -> List[Figu
 
 
 def make_cipher(name: str, src_file: str, out_root="./", red_cuts: bool = False, pos: Tuple[float, float]=(0,0)):
-    font_size = 18
+    font_size = 23
     font_family="monospace"
     font_weight = "bold"
     letter_spaceing=5
     name = name.strip()
-    if len(name) == 7:
+    if len(name) == 6:
+        font_size=18
+        letter_spaceing=3
+    elif len(name) == 7:
         font_size=15
         letter_spaceing=3
     elif len(name) == 8:
